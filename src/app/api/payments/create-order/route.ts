@@ -1,11 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import Razorpay from "razorpay";
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+async function createRazorpayOrder(params: {
+  amount: number;
+  currency: string;
+  receipt: string;
+  notes: Record<string, string>;
+}) {
+  const keyId = process.env.RAZORPAY_KEY_ID!;
+  const keySecret = process.env.RAZORPAY_KEY_SECRET!;
+  const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
+
+  const res = await fetch("https://api.razorpay.com/v1/orders", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Basic ${auth}`,
+    },
+    body: JSON.stringify(params),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error?.description || "Razorpay order creation failed");
+  }
+
+  return res.json();
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -85,7 +109,7 @@ export async function POST(request: NextRequest) {
     // Create Razorpay order (amount in paise — INR smallest unit)
     const amountInPaise = Math.round(course.price * 100);
 
-    const order = await razorpay.orders.create({
+    const order = await createRazorpayOrder({
       amount: amountInPaise,
       currency: "INR",
       receipt: `course_${courseId}_${user.id}_${Date.now()}`,
