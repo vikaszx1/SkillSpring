@@ -9,7 +9,7 @@ import PromptDialog from "@/components/PromptDialog";
 
 export default function AdminPayoutsPage() {
   const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
-  const [filter, setFilter] = useState<"pending" | "paid" | "rejected" | "all">("pending");
+  const [filter, setFilter] = useState<"pending" | "paid" | "rejected" | "all">("all");
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
   const { toast } = useToast();
