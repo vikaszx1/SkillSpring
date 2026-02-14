@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import type { Course, Category } from "@/lib/types";
@@ -11,6 +11,14 @@ import CourseCard from "@/components/CourseCard";
 type SortOption = "newest" | "price-low" | "price-high" | "popular";
 
 export default function CoursesMarketplace() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-500">Loading...</div>}>
+      <CoursesContent />
+    </Suspense>
+  );
+}
+
+function CoursesContent() {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") || "";
 
