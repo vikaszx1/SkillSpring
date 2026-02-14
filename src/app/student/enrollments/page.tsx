@@ -50,9 +50,9 @@ export default function EnrollmentsPage() {
           {enrollments.map((enrollment) => (
             <div
               key={enrollment.id}
-              className="p-4 flex items-center justify-between"
+              className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
             >
-              <div>
+              <div className="min-w-0">
                 <p className="font-medium text-gray-900">
                   {enrollment.course?.title}
                 </p>
@@ -63,7 +63,7 @@ export default function EnrollmentsPage() {
               </div>
               <Link
                 href={`/student/courses/${enrollment.course_id}/learn`}
-                className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 font-medium text-sm"
+                className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 font-medium text-sm text-center sm:flex-shrink-0"
               >
                 Learn
               </Link>

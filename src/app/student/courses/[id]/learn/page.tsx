@@ -177,7 +177,7 @@ export default function LearnPage() {
           url={activeLesson?.video_url || null}
           title={activeLesson?.title || ""}
         />
-        <div className="p-6 space-y-8">
+        <div className="p-4 sm:p-6 space-y-8">
           <div>
             <h1 className="text-xl font-bold text-gray-900">
               {activeLesson?.title || "Select a lesson"}

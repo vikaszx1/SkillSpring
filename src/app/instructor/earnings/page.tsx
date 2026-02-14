@@ -274,7 +274,7 @@ export default function InstructorEarningsPage() {
         )}
 
         {/* Current payment method info */}
-        <div className="mt-4 pt-4 border-t flex items-center justify-between">
+        <div className="mt-4 pt-4 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           {paymentMethod ? (
             <div className="text-sm text-gray-600">
               <span className="text-gray-400">Payout to: </span>
@@ -304,127 +304,189 @@ export default function InstructorEarningsPage() {
       {/* Payout History */}
       {payouts.length > 0 && (
         <div className="bg-white rounded-xl border mb-8">
-          <div className="p-6 border-b">
+          <div className="p-4 sm:p-6 border-b">
             <h2 className="font-semibold text-gray-900">Payout History</h2>
           </div>
-          <table className="w-full">
-            <thead>
-              <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <th className="px-6 py-3">Amount</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Requested</th>
-                <th className="px-6 py-3">Processed</th>
-                <th className="px-6 py-3">Note</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {payouts.map((p) => (
-                <tr key={p.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    ₹{p.amount.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2 py-0.5 rounded text-xs font-medium ${
-                        p.status === "paid"
-                          ? "bg-green-100 text-green-700"
-                          : p.status === "rejected"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(p.requested_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {p.processed_at
-                      ? new Date(p.processed_at).toLocaleDateString()
-                      : "—"}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {p.admin_note || "—"}
-                  </td>
+          {/* Desktop table */}
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3">Amount</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Requested</th>
+                  <th className="px-6 py-3">Processed</th>
+                  <th className="px-6 py-3">Note</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y">
+                {payouts.map((p) => (
+                  <tr key={p.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                      ₹{p.amount.toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-2 py-0.5 rounded text-xs font-medium ${
+                          p.status === "paid"
+                            ? "bg-green-100 text-green-700"
+                            : p.status === "rejected"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-yellow-100 text-yellow-700"
+                        }`}
+                      >
+                        {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {new Date(p.requested_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {p.processed_at
+                        ? new Date(p.processed_at).toLocaleDateString()
+                        : "—"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {p.admin_note || "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {/* Mobile cards */}
+          <div className="sm:hidden divide-y">
+            {payouts.map((p) => (
+              <div key={p.id} className="p-4">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-gray-900">₹{p.amount.toLocaleString()}</span>
+                  <span
+                    className={`px-2 py-0.5 rounded text-xs font-medium ${
+                      p.status === "paid"
+                        ? "bg-green-100 text-green-700"
+                        : p.status === "rejected"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
+                  >
+                    {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Requested: {new Date(p.requested_at).toLocaleDateString()}
+                  {p.processed_at && ` · Processed: ${new Date(p.processed_at).toLocaleDateString()}`}
+                </p>
+                {p.admin_note && <p className="text-xs text-gray-400 mt-1">{p.admin_note}</p>}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       {/* Per-Course Breakdown */}
       <div className="bg-white rounded-xl border mb-8">
-        <div className="p-6 border-b">
+        <div className="p-4 sm:p-6 border-b">
           <h2 className="font-semibold text-gray-900">Revenue by Course</h2>
         </div>
         {courseEarnings.length === 0 ? (
           <div className="p-6 text-gray-500 text-sm">No courses yet.</div>
         ) : (
-          <table className="w-full">
-            <thead>
-              <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <th className="px-6 py-3">Course</th>
-                <th className="px-6 py-3 text-right">Enrollments</th>
-                <th className="px-6 py-3 text-right">Revenue</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
+          <>
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3">Course</th>
+                    <th className="px-6 py-3 text-right">Enrollments</th>
+                    <th className="px-6 py-3 text-right">Revenue</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {courseEarnings.map((ce) => (
+                    <tr key={ce.course_id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                        {ce.course_title}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500 text-right">
+                        {ce.enrollments}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-green-600 text-right">
+                        ₹{ce.revenue.toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="sm:hidden divide-y">
               {courseEarnings.map((ce) => (
-                <tr key={ce.course_id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    {ce.course_title}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 text-right">
-                    {ce.enrollments}
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium text-green-600 text-right">
-                    ₹{ce.revenue.toLocaleString()}
-                  </td>
-                </tr>
+                <div key={ce.course_id} className="p-4">
+                  <p className="text-sm font-medium text-gray-900">{ce.course_title}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-xs text-gray-500">{ce.enrollments} enrollments</span>
+                    <span className="text-sm font-medium text-green-600">₹{ce.revenue.toLocaleString()}</span>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
 
       {/* Recent Transactions */}
       <div className="bg-white rounded-xl border">
-        <div className="p-6 border-b">
+        <div className="p-4 sm:p-6 border-b">
           <h2 className="font-semibold text-gray-900">Recent Transactions</h2>
         </div>
         {recentTransactions.length === 0 ? (
           <div className="p-6 text-gray-500 text-sm">No transactions yet.</div>
         ) : (
-          <table className="w-full">
-            <thead>
-              <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <th className="px-6 py-3">Student</th>
-                <th className="px-6 py-3">Course</th>
-                <th className="px-6 py-3 text-right">Amount</th>
-                <th className="px-6 py-3 text-right">Date</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
+          <>
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3">Student</th>
+                    <th className="px-6 py-3">Course</th>
+                    <th className="px-6 py-3 text-right">Amount</th>
+                    <th className="px-6 py-3 text-right">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {recentTransactions.map((t) => (
+                    <tr key={t.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {t.student_name}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        {t.course_title}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-green-600 text-right">
+                        ₹{t.amount.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500 text-right">
+                        {new Date(t.date).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="sm:hidden divide-y">
               {recentTransactions.map((t) => (
-                <tr key={t.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {t.student_name}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {t.course_title}
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium text-green-600 text-right">
-                    ₹{t.amount.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 text-right">
-                    {new Date(t.date).toLocaleDateString()}
-                  </td>
-                </tr>
+                <div key={t.id} className="p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-900">{t.student_name}</span>
+                    <span className="text-sm font-medium text-green-600">₹{t.amount.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-xs text-gray-500 truncate mr-2">{t.course_title}</span>
+                    <span className="text-xs text-gray-400 flex-shrink-0">{new Date(t.date).toLocaleDateString()}</span>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
     </div>

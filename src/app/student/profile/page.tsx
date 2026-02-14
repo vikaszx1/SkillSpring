@@ -145,7 +145,7 @@ export default function StudentProfilePage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-8">My Profile</h1>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-white p-5 rounded-xl border text-center">
           <p className="text-2xl font-bold text-gray-900">{enrolledCount}</p>
           <p className="text-sm text-gray-500 mt-1">Courses Enrolled</p>

@@ -45,8 +45,8 @@ export default function InstructorDashboard() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard</h1>
         <Link
           href="/instructor/courses/new"
           className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 font-medium text-sm"
@@ -55,7 +55,7 @@ export default function InstructorDashboard() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl border">
           <p className="text-sm text-gray-500">Total Courses</p>
           <p className="text-3xl font-bold text-gray-900 mt-1">{stats.total}</p>

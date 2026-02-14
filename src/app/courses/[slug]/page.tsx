@@ -162,7 +162,7 @@ export default function CourseDetailPage() {
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
           <div className="lg:col-span-2 flex flex-col justify-center">
             {course.category && (
               <span className="inline-block w-fit px-3 py-1 bg-primary-500/20 text-primary-300 rounded-full text-xs font-medium mb-4 backdrop-blur-sm border border-primary-500/20">
@@ -270,7 +270,7 @@ export default function CourseDetailPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             {/* About this course */}

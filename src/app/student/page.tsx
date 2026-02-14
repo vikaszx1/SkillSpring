@@ -31,8 +31,8 @@ export default function StudentDashboard() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">My Dashboard</h1>
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">My Dashboard</h1>
         <Link
           href="/courses"
           className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 font-medium text-sm"

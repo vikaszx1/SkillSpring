@@ -141,7 +141,7 @@ export default function AdminPayoutsPage() {
         onCancel={() => setPromptOpen(false)}
       />
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Payout Requests</h1>
         {filter === "pending" && payouts.length > 0 && (
           <div className="text-sm text-gray-500">
@@ -154,7 +154,7 @@ export default function AdminPayoutsPage() {
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-6">
         {(["pending", "paid", "rejected", "all"] as const).map((f) => (
           <button
             key={f}
@@ -185,7 +185,9 @@ export default function AdminPayoutsPage() {
             : `No ${filter === "all" ? "" : filter + " "}payout requests.`}
         </div>
       ) : (
-        <div className="bg-white rounded-xl border overflow-hidden">
+        <>
+        {/* Desktop table */}
+        <div className="hidden lg:block bg-white rounded-xl border overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -274,6 +276,69 @@ export default function AdminPayoutsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile cards */}
+        <div className="lg:hidden space-y-3">
+          {payouts.map((p) => (
+            <div key={p.id} className="bg-white rounded-xl border p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-gray-900">{p.instructor?.full_name || "—"}</p>
+                  <p className="text-xs text-gray-500 truncate">{p.instructor?.email}</p>
+                </div>
+                <span
+                  className={`px-2 py-0.5 rounded text-xs font-medium flex-shrink-0 ml-2 ${
+                    p.status === "paid"
+                      ? "bg-green-100 text-green-700"
+                      : p.status === "rejected"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}
+                >
+                  {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-lg font-semibold text-gray-900">₹{p.amount.toLocaleString()}</span>
+                <span className="text-xs text-gray-400">{new Date(p.requested_at).toLocaleDateString()}</span>
+              </div>
+              {p.payment_method_type && (
+                <div className="mb-3">
+                  <span
+                    className={`px-2 py-0.5 rounded text-xs font-medium ${
+                      p.payment_method_type === "upi"
+                        ? "bg-purple-100 text-purple-700"
+                        : "bg-blue-100 text-blue-700"
+                    }`}
+                  >
+                    {p.payment_method_type === "upi" ? "UPI" : "Bank"}
+                  </span>
+                  <p className="text-xs text-gray-700 mt-1 font-mono break-all">{p.payment_details}</p>
+                </div>
+              )}
+              {p.admin_note && (
+                <p className="text-xs text-gray-500 mb-3">Note: {p.admin_note}</p>
+              )}
+              {p.status === "pending" && (
+                <div className="flex gap-2 pt-2 border-t">
+                  <button
+                    onClick={() => handleMarkPaid(p.id)}
+                    className="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 font-medium text-xs"
+                  >
+                    Mark as Paid
+                  </button>
+                  <button
+                    onClick={() => handleReject(p.id)}
+                    className="flex-1 bg-red-50 text-red-600 px-3 py-2 rounded-lg hover:bg-red-100 font-medium text-xs"
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        </>
       )}
     </div>
   );

@@ -101,7 +101,9 @@ export default function AdminUsersPage() {
           No users found.
         </div>
       ) : (
-        <div className="bg-white rounded-xl border overflow-hidden">
+        <>
+        {/* Desktop table */}
+        <div className="hidden md:block bg-white rounded-xl border overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -170,6 +172,59 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {filtered.map((user) => (
+            <div key={user.id} className="bg-white rounded-xl border p-4">
+              <div className="flex items-center gap-3 mb-3">
+                {user.avatar_url ? (
+                  <img
+                    src={user.avatar_url}
+                    alt=""
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-semibold">
+                    {user.full_name?.charAt(0)?.toUpperCase() || "?"}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 text-sm">{user.full_name || "—"}</p>
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                </div>
+                <span
+                  className={`px-2 py-0.5 rounded text-xs font-medium ${
+                    user.role === "admin"
+                      ? "bg-purple-100 text-purple-700"
+                      : user.role === "instructor"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-green-100 text-green-700"
+                  }`}
+                >
+                  {user.role}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-400">
+                  Joined {new Date(user.created_at).toLocaleDateString()}
+                </span>
+                <select
+                  value={user.role}
+                  onChange={(e) =>
+                    handleRoleChange(user.id, e.target.value as UserRole)
+                  }
+                  className="text-sm border rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-500 outline-none"
+                >
+                  <option value="student">Student</option>
+                  <option value="instructor">Instructor</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+          ))}
+        </div>
+        </>
       )}
     </div>
   );

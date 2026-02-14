@@ -278,10 +278,10 @@ export default function AdminCourseReviewPage() {
       </Link>
 
       {/* Header with actions */}
-      <div className="bg-white rounded-xl border p-6 mb-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900">{course.title}</h1>
+      <div className="bg-white rounded-xl border p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{course.title}</h1>
             <div className="flex items-center gap-3 mt-2">
               {course.instructor?.avatar_url ? (
                 <img src={course.instructor.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
@@ -290,26 +290,26 @@ export default function AdminCourseReviewPage() {
                   {course.instructor?.full_name?.charAt(0).toUpperCase()}
                 </div>
               )}
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm font-medium text-gray-900">{course.instructor?.full_name}</p>
-                <p className="text-xs text-gray-500">{course.instructor?.email}</p>
+                <p className="text-xs text-gray-500 truncate">{course.instructor?.email}</p>
               </div>
             </div>
           </div>
 
           {/* Action buttons */}
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex flex-wrap gap-2 flex-shrink-0">
             {!course.is_approved ? (
               <button
                 onClick={handleApprove}
-                className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 font-medium text-sm"
+                className="bg-green-600 text-white px-4 sm:px-5 py-2 rounded-lg hover:bg-green-700 font-medium text-sm"
               >
                 Approve
               </button>
             ) : (
               <button
                 onClick={handleRevoke}
-                className="bg-red-50 text-red-600 px-5 py-2 rounded-lg hover:bg-red-100 font-medium text-sm border border-red-200"
+                className="bg-red-50 text-red-600 px-4 sm:px-5 py-2 rounded-lg hover:bg-red-100 font-medium text-sm border border-red-200"
               >
                 Revoke
               </button>
@@ -317,21 +317,21 @@ export default function AdminCourseReviewPage() {
             {course.is_flagged ? (
               <button
                 onClick={handleUnflag}
-                className="bg-orange-100 text-orange-700 px-5 py-2 rounded-lg hover:bg-orange-200 font-medium text-sm"
+                className="bg-orange-100 text-orange-700 px-4 sm:px-5 py-2 rounded-lg hover:bg-orange-200 font-medium text-sm"
               >
                 Unflag
               </button>
             ) : (
               <button
                 onClick={handleFlag}
-                className="bg-yellow-50 text-yellow-700 px-5 py-2 rounded-lg hover:bg-yellow-100 font-medium text-sm border border-yellow-200"
+                className="bg-yellow-50 text-yellow-700 px-4 sm:px-5 py-2 rounded-lg hover:bg-yellow-100 font-medium text-sm border border-yellow-200"
               >
                 Flag
               </button>
             )}
             <button
               onClick={handleDelete}
-              className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 font-medium text-sm"
+              className="bg-red-600 text-white px-4 sm:px-5 py-2 rounded-lg hover:bg-red-700 font-medium text-sm"
             >
               Delete
             </button>
@@ -376,7 +376,7 @@ export default function AdminCourseReviewPage() {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <div className="bg-white rounded-xl border p-4 text-center">
           <p className="text-2xl font-bold text-gray-900">{sections.length}</p>
           <p className="text-xs text-gray-500 mt-1">Sections</p>

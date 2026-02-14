@@ -192,7 +192,7 @@ export default function EditCoursePage() {
   if (loading) return <div className="text-gray-500">Loading...</div>;
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-3xl w-full">
       <ConfirmDialog
         open={confirmOpen}
         title={confirmConfig.title}
@@ -256,7 +256,7 @@ export default function EditCoursePage() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Price (₹)
@@ -365,51 +365,55 @@ export default function EditCoursePage() {
                   {section.lessons.map((lesson, lIdx) => (
                     <div
                       key={lesson.id}
-                      className="p-3 flex items-center gap-3"
+                      className="p-3 space-y-2 sm:space-y-0 sm:flex sm:items-center sm:gap-3"
                     >
-                      <span className="text-xs text-gray-400 w-6">
-                        {sIdx + 1}.{lIdx + 1}
-                      </span>
-                      <input
-                        type="text"
-                        defaultValue={lesson.title}
-                        onBlur={(e) =>
-                          handleUpdateLesson(lesson.id, {
-                            title: e.target.value,
-                          })
-                        }
-                        className="flex-1 px-2 py-1 border rounded text-sm focus:ring-1 focus:ring-primary-500 outline-none"
-                      />
-                      <input
-                        type="url"
-                        defaultValue={lesson.video_url || ""}
-                        placeholder="Video URL"
-                        onBlur={(e) =>
-                          handleUpdateLesson(lesson.id, {
-                            video_url: e.target.value || null,
-                          })
-                        }
-                        className="w-48 px-2 py-1 border rounded text-sm focus:ring-1 focus:ring-primary-500 outline-none"
-                      />
-                      <label className="flex items-center gap-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-3 sm:contents">
+                        <span className="text-xs text-gray-400 w-6 flex-shrink-0">
+                          {sIdx + 1}.{lIdx + 1}
+                        </span>
                         <input
-                          type="checkbox"
-                          defaultChecked={lesson.is_preview}
-                          onChange={(e) =>
+                          type="text"
+                          defaultValue={lesson.title}
+                          onBlur={(e) =>
                             handleUpdateLesson(lesson.id, {
-                              is_preview: e.target.checked,
+                              title: e.target.value,
                             })
                           }
-                          className="rounded"
+                          className="flex-1 px-2 py-1 border rounded text-sm focus:ring-1 focus:ring-primary-500 outline-none"
                         />
-                        Preview
-                      </label>
-                      <button
-                        onClick={() => handleDeleteLesson(lesson.id)}
-                        className="text-xs text-red-500 hover:underline"
-                      >
-                        Remove
-                      </button>
+                      </div>
+                      <div className="flex items-center gap-3 pl-9 sm:pl-0">
+                        <input
+                          type="url"
+                          defaultValue={lesson.video_url || ""}
+                          placeholder="Video URL"
+                          onBlur={(e) =>
+                            handleUpdateLesson(lesson.id, {
+                              video_url: e.target.value || null,
+                            })
+                          }
+                          className="flex-1 sm:w-48 sm:flex-none px-2 py-1 border rounded text-sm focus:ring-1 focus:ring-primary-500 outline-none"
+                        />
+                        <label className="flex items-center gap-1 text-xs text-gray-500 flex-shrink-0">
+                          <input
+                            type="checkbox"
+                            defaultChecked={lesson.is_preview}
+                            onChange={(e) =>
+                              handleUpdateLesson(lesson.id, {
+                                is_preview: e.target.checked,
+                              })
+                            }
+                            className="rounded"
+                          />
+                          Preview
+                        </label>
+                        <button
+                          onClick={() => handleDeleteLesson(lesson.id)}
+                          className="text-xs text-red-500 hover:underline flex-shrink-0"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

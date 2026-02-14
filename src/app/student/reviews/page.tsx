@@ -176,8 +176,8 @@ export default function StudentReviewsPage() {
       ) : (
         <div className="space-y-4">
           {reviews.map((review) => (
-            <div key={review.id} className="bg-white rounded-xl border p-5">
-              <div className="flex items-start gap-4">
+            <div key={review.id} className="bg-white rounded-xl border p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
                 {/* Thumbnail */}
                 <Link
                   href={`/courses/${review.course.slug}`}
@@ -187,10 +187,10 @@ export default function StudentReviewsPage() {
                     <img
                       src={review.course.thumbnail_url}
                       alt={review.course.title}
-                      className="w-24 h-16 object-cover rounded-lg"
+                      className="w-full sm:w-24 h-32 sm:h-16 object-cover rounded-lg"
                     />
                   ) : (
-                    <div className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="w-full sm:w-24 h-32 sm:h-16 bg-gray-100 rounded-lg flex items-center justify-center">
                       <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                       </svg>

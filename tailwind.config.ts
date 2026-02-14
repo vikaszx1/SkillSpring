@@ -22,6 +22,15 @@ const config: Config = {
           900: "#1e3a8a",
         },
       },
+      keyframes: {
+        "slide-in": {
+          from: { transform: "translateX(-100%)" },
+          to: { transform: "translateX(0)" },
+        },
+      },
+      animation: {
+        "slide-in": "slide-in 0.2s ease-out",
+      },
     },
   },
   plugins: [],

@@ -102,11 +102,11 @@ export default function InstructorCoursesPage() {
           {courses.map((course) => (
             <div
               key={course.id}
-              className="bg-white rounded-xl border p-6 flex items-center justify-between"
+              className="bg-white rounded-xl border p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
             >
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-gray-900">{course.title}</h3>
-                <div className="flex items-center gap-3 mt-2 text-sm">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-sm">
                   <span
                     className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                       course.is_approved
@@ -148,7 +148,7 @@ export default function InstructorCoursesPage() {
                   </p>
                 )}
               </div>
-              <div className="flex gap-2 ml-4 flex-shrink-0">
+              <div className="flex gap-2 flex-shrink-0">
                 {course.is_flagged && !course.flag_appeal && (
                   <button
                     onClick={() => handleAppeal(course.id)}
