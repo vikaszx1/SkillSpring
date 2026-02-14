@@ -3,6 +3,8 @@ import Sidebar from "@/components/Sidebar";
 const links = [
   { label: "Dashboard", href: "/admin" },
   { label: "Course Approvals", href: "/admin/courses" },
+  { label: "Users", href: "/admin/users" },
+  { label: "Payouts", href: "/admin/payouts" },
   { label: "Categories", href: "/admin/categories" },
 ];
 

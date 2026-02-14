@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { createAdminClient } from "@/lib/supabase-admin";
 import { createHmac } from "crypto";
 
 export const runtime = "nodejs";
@@ -26,9 +27,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify signature
+    // Verify Razorpay signature (HMAC SHA256)
     const body = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSignature = createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+    const expectedSignature = createHmac(
+      "sha256",
+      process.env.RAZORPAY_KEY_SECRET!
+    )
       .update(body)
       .digest("hex");
 
@@ -39,7 +43,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Signature verified — create Supabase client
+    // Auth client — get the logged-in user
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -53,7 +57,6 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    // Verify user
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -65,8 +68,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get course price for the enrollment record
-    const { data: course } = await supabase
+    // Service Role client — insert enrollment (bypasses RLS)
+    const adminSupabase = createAdminClient();
+
+    // Fetch course price for the record
+    const { data: course } = await adminSupabase
       .from("courses")
       .select("price")
       .eq("id", courseId)
@@ -79,16 +85,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Insert payment record
+    const { error: paymentError } = await adminSupabase
+      .from("payments")
+      .insert({
+        user_id: user.id,
+        course_id: courseId,
+        razorpay_order_id,
+        razorpay_payment_id,
+        amount: course.price,
+        currency: "INR",
+        status: "captured",
+      });
+
+    if (paymentError) {
+      console.error("Payment record error:", paymentError);
+      // Don't block enrollment if payment record fails (payment is already verified)
+    }
+
     // Insert enrollment
-    const { error: enrollError } = await supabase.from("enrollments").insert({
-      user_id: user.id,
-      course_id: courseId,
-      payment_id: razorpay_payment_id,
-      amount_paid: course.price,
-    });
+    const { error: enrollError } = await adminSupabase
+      .from("enrollments")
+      .insert({
+        user_id: user.id,
+        course_id: courseId,
+        payment_id: razorpay_payment_id,
+        amount_paid: course.price,
+      });
 
     if (enrollError) {
-      // Duplicate enrollment check
       if (enrollError.code === "23505") {
         return NextResponse.json(
           { error: "Already enrolled in this course" },

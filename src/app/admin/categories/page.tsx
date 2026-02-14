@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import type { Category } from "@/lib/types";
+import { useToast } from "@/components/Toast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -10,6 +12,11 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const supabase = createClient();
+  const { toast } = useToast();
+
+  // Confirm dialog
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     loadCategories();
@@ -46,20 +53,41 @@ export default function CategoriesPage() {
 
     if (insertError) {
       setError(insertError.message);
+      toast(insertError.message, "error");
       return;
     }
 
     setNewName("");
+    toast("Category added successfully", "success");
     loadCategories();
   }
 
-  async function handleDelete(id: string) {
-    await supabase.from("categories").delete().eq("id", id);
+  function handleDeleteClick(id: string, name: string) {
+    setDeleteTarget({ id, name });
+    setConfirmOpen(true);
+  }
+
+  async function executeDelete() {
+    if (!deleteTarget) return;
+    setConfirmOpen(false);
+    await supabase.from("categories").delete().eq("id", deleteTarget.id);
+    toast("Category deleted", "warning");
+    setDeleteTarget(null);
     loadCategories();
   }
 
   return (
     <div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Category"
+        message={`Are you sure you want to delete "${deleteTarget?.name}"? Courses in this category will have their category unset.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={executeDelete}
+        onCancel={() => { setConfirmOpen(false); setDeleteTarget(null); }}
+      />
+
       <h1 className="text-2xl font-bold text-gray-900 mb-8">
         Category Management
       </h1>
@@ -111,7 +139,7 @@ export default function CategoriesPage() {
                 <p className="text-sm text-gray-400">{category.slug}</p>
               </div>
               <button
-                onClick={() => handleDelete(category.id)}
+                onClick={() => handleDeleteClick(category.id, category.name)}
                 className="text-sm text-red-500 hover:text-red-700 font-medium"
               >
                 Delete

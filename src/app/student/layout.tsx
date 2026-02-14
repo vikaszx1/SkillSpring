@@ -4,6 +4,8 @@ const links = [
   { label: "Dashboard", href: "/student" },
   { label: "Browse Courses", href: "/courses" },
   { label: "My Enrollments", href: "/student/enrollments" },
+  { label: "My Reviews", href: "/student/reviews" },
+  { label: "Profile", href: "/student/profile" },
 ];
 
 export default function StudentLayout({

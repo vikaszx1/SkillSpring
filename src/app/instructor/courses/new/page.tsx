@@ -3,12 +3,15 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import type { Category } from "@/lib/types";
+import type { Category, CourseLevel } from "@/lib/types";
+import ThumbnailUpload from "@/components/ThumbnailUpload";
+import { useToast } from "@/components/Toast";
 
 export default function NewCoursePage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("0");
+  const [level, setLevel] = useState<CourseLevel>("beginner");
   const [categoryId, setCategoryId] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
@@ -16,6 +19,7 @@ export default function NewCoursePage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const { toast } = useToast();
 
   useEffect(() => {
     async function loadCategories() {
@@ -53,6 +57,7 @@ export default function NewCoursePage() {
       slug,
       description,
       price: parseFloat(price),
+      level,
       category_id: categoryId || null,
       thumbnail_url: thumbnailUrl || null,
       is_published: false,
@@ -61,10 +66,12 @@ export default function NewCoursePage() {
 
     if (insertError) {
       setError(insertError.message);
+      toast(insertError.message, "error");
       setLoading(false);
       return;
     }
 
+    toast("Course created successfully!", "success");
     router.push("/instructor/courses");
     router.refresh();
   }
@@ -112,7 +119,7 @@ export default function NewCoursePage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Price ($)
+              Price (₹)
             </label>
             <input
               type="number"
@@ -145,16 +152,23 @@ export default function NewCoursePage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Thumbnail URL
+            Level
           </label>
-          <input
-            type="url"
-            value={thumbnailUrl}
-            onChange={(e) => setThumbnailUrl(e.target.value)}
+          <select
+            value={level}
+            onChange={(e) => setLevel(e.target.value as CourseLevel)}
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-            placeholder="https://example.com/image.jpg"
-          />
+          >
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
         </div>
+
+        <ThumbnailUpload
+          currentUrl={thumbnailUrl}
+          onUploaded={(url) => setThumbnailUrl(url)}
+        />
 
         <div className="flex gap-3">
           <button

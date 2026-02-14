@@ -58,7 +58,7 @@ export default function EnrollmentsPage() {
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
                   Enrolled {new Date(enrollment.enrolled_at).toLocaleDateString()}{" "}
-                  · Paid ${enrollment.amount_paid}
+                  · Paid &#8377;{enrollment.amount_paid}
                 </p>
               </div>
               <Link

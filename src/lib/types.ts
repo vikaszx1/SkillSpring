@@ -1,4 +1,5 @@
 export type UserRole = "admin" | "instructor" | "student";
+export type CourseLevel = "beginner" | "intermediate" | "advanced";
 
 export interface User {
   id: string;
@@ -25,8 +26,12 @@ export interface Course {
   description: string | null;
   thumbnail_url: string | null;
   price: number;
+  level: CourseLevel;
   is_approved: boolean;
   is_published: boolean;
+  is_flagged: boolean;
+  flag_reason: string | null;
+  flag_appeal: string | null;
   created_at: string;
   updated_at: string;
   // Joined fields
@@ -81,6 +86,48 @@ export interface Review {
   comment: string | null;
   created_at: string;
   user?: User;
+}
+
+export type PaymentMethodType = "upi" | "bank";
+
+export interface InstructorPaymentMethod {
+  id: string;
+  instructor_id: string;
+  method_type: PaymentMethodType;
+  upi_id: string | null;
+  bank_account_number: string | null;
+  bank_ifsc: string | null;
+  bank_account_name: string | null;
+  is_default: boolean;
+  created_at: string;
+}
+
+export interface PayoutRequest {
+  id: string;
+  instructor_id: string;
+  amount: number;
+  status: "pending" | "paid" | "rejected";
+  payment_method_type: PaymentMethodType | null;
+  payment_details: string | null;
+  admin_note: string | null;
+  requested_at: string;
+  processed_at: string | null;
+  instructor?: User;
+}
+
+export interface Payment {
+  id: string;
+  user_id: string;
+  course_id: string;
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  amount: number;
+  currency: string;
+  status: "captured" | "refunded";
+  created_at: string;
+  // Joined fields
+  user?: User;
+  course?: Course;
 }
 
 export interface CourseApprovalLog {

@@ -3,6 +3,9 @@ import Sidebar from "@/components/Sidebar";
 const links = [
   { label: "Dashboard", href: "/instructor" },
   { label: "My Courses", href: "/instructor/courses" },
+  { label: "Earnings", href: "/instructor/earnings" },
+  { label: "Payout Settings", href: "/instructor/payout-settings" },
+  { label: "Profile", href: "/instructor/profile" },
 ];
 
 export default function InstructorLayout({

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/Toast";
 
 declare global {
   interface Window {
@@ -62,6 +63,7 @@ export default function RazorpayButton({
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const { toast } = useToast();
 
   async function handlePayment() {
     setError("");
@@ -69,7 +71,7 @@ export default function RazorpayButton({
 
     try {
       // Step 1: Create order on backend
-      const orderRes = await fetch("/api/payments/create-order", {
+      const orderRes = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ courseId }),
@@ -78,7 +80,9 @@ export default function RazorpayButton({
       const orderData = await orderRes.json();
 
       if (!orderRes.ok) {
-        setError(orderData.error || "Failed to create order");
+        const msg = orderData.error || "Failed to create order";
+        setError(msg);
+        toast(msg, "error");
         setLoading(false);
         return;
       }
@@ -94,7 +98,7 @@ export default function RazorpayButton({
         handler: async function (response: RazorpayResponse) {
           // Step 3: Verify payment on backend
           try {
-            const verifyRes = await fetch("/api/payments/verify", {
+            const verifyRes = await fetch("/api/verify-payment", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -108,15 +112,17 @@ export default function RazorpayButton({
             const verifyData = await verifyRes.json();
 
             if (verifyRes.ok && verifyData.success) {
+              toast("Payment successful! Redirecting to course...", "success");
               onSuccess();
               router.push(`/student/courses/${courseId}/learn`);
             } else {
-              setError(
-                verifyData.error || "Payment verification failed. Contact support."
-              );
+              const msg = verifyData.error || "Payment verification failed. Contact support.";
+              setError(msg);
+              toast(msg, "error");
             }
           } catch {
             setError("Payment verification failed. Please contact support.");
+            toast("Payment verification failed. Please contact support.", "error");
           }
           setLoading(false);
         },
@@ -137,13 +143,16 @@ export default function RazorpayButton({
       const rzp = new window.Razorpay(options);
 
       rzp.on("payment.failed", function (response: { error: { description: string } }) {
-        setError(response.error.description || "Payment failed");
+        const msg = response.error.description || "Payment failed";
+        setError(msg);
+        toast(msg, "error");
         setLoading(false);
       });
 
       rzp.open();
     } catch {
       setError("Something went wrong. Please try again.");
+      toast("Something went wrong. Please try again.", "error");
       setLoading(false);
     }
   }

@@ -3,12 +3,16 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase";
 import { useRouter, useParams } from "next/navigation";
-import type { Course, CourseSection, CourseLesson, Category } from "@/lib/types";
+import type { Course, CourseSection, CourseLesson, Category, CourseLevel } from "@/lib/types";
+import ThumbnailUpload from "@/components/ThumbnailUpload";
+import { useToast } from "@/components/Toast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function EditCoursePage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const supabase = createClient();
+  const { toast } = useToast();
 
   const [course, setCourse] = useState<Course | null>(null);
   const [title, setTitle] = useState("");
@@ -16,6 +20,7 @@ export default function EditCoursePage() {
   const [price, setPrice] = useState("0");
   const [categoryId, setCategoryId] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [level, setLevel] = useState<CourseLevel>("beginner");
   const [isPublished, setIsPublished] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [sections, setSections] = useState<(CourseSection & { lessons?: CourseLesson[] })[]>([]);
@@ -23,6 +28,16 @@ export default function EditCoursePage() {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Confirm dialog
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState<{
+    title: string;
+    message: string;
+    confirmLabel: string;
+    variant: "danger" | "warning";
+    onConfirm: () => void;
+  }>({ title: "", message: "", confirmLabel: "", variant: "danger", onConfirm: () => {} });
 
   useEffect(() => {
     loadCourse();
@@ -52,6 +67,7 @@ export default function EditCoursePage() {
     setPrice(courseData.price.toString());
     setCategoryId(courseData.category_id || "");
     setThumbnailUrl(courseData.thumbnail_url || "");
+    setLevel(courseData.level || "beginner");
     setIsPublished(courseData.is_published);
 
     const { data: sectionsData } = await supabase
@@ -82,6 +98,7 @@ export default function EditCoursePage() {
         title,
         description,
         price: parseFloat(price),
+        level,
         category_id: categoryId || null,
         thumbnail_url: thumbnailUrl || null,
         is_published: isPublished,
@@ -90,6 +107,9 @@ export default function EditCoursePage() {
 
     if (updateError) {
       setError(updateError.message);
+      toast(updateError.message, "error");
+    } else {
+      toast("Course saved successfully", "success");
     }
     setSaving(false);
   }
@@ -107,13 +127,25 @@ export default function EditCoursePage() {
 
     if (!insertError) {
       setNewSectionTitle("");
+      toast("Section added", "success");
       loadCourse();
     }
   }
 
-  async function handleDeleteSection(sectionId: string) {
-    await supabase.from("course_sections").delete().eq("id", sectionId);
-    loadCourse();
+  function handleDeleteSection(sectionId: string) {
+    setConfirmConfig({
+      title: "Delete Section",
+      message: "Are you sure you want to delete this section? All lessons within it will also be removed.",
+      confirmLabel: "Delete Section",
+      variant: "danger",
+      onConfirm: async () => {
+        setConfirmOpen(false);
+        await supabase.from("course_sections").delete().eq("id", sectionId);
+        toast("Section deleted", "warning");
+        loadCourse();
+      },
+    });
+    setConfirmOpen(true);
   }
 
   async function handleAddLesson(sectionId: string) {
@@ -128,7 +160,10 @@ export default function EditCoursePage() {
         position: lessonCount,
       });
 
-    if (!insertError) loadCourse();
+    if (!insertError) {
+      toast("Lesson added", "success");
+      loadCourse();
+    }
   }
 
   async function handleUpdateLesson(
@@ -138,15 +173,36 @@ export default function EditCoursePage() {
     await supabase.from("course_lessons").update(updates).eq("id", lessonId);
   }
 
-  async function handleDeleteLesson(lessonId: string) {
-    await supabase.from("course_lessons").delete().eq("id", lessonId);
-    loadCourse();
+  function handleDeleteLesson(lessonId: string) {
+    setConfirmConfig({
+      title: "Remove Lesson",
+      message: "Are you sure you want to remove this lesson?",
+      confirmLabel: "Remove",
+      variant: "danger",
+      onConfirm: async () => {
+        setConfirmOpen(false);
+        await supabase.from("course_lessons").delete().eq("id", lessonId);
+        toast("Lesson removed", "warning");
+        loadCourse();
+      },
+    });
+    setConfirmOpen(true);
   }
 
   if (loading) return <div className="text-gray-500">Loading...</div>;
 
   return (
     <div className="max-w-3xl">
+      <ConfirmDialog
+        open={confirmOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        confirmLabel={confirmConfig.confirmLabel}
+        variant={confirmConfig.variant}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmOpen(false)}
+      />
+
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Edit Course</h1>
         <div className="flex items-center gap-2 text-sm">
@@ -203,7 +259,7 @@ export default function EditCoursePage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Price ($)
+              Price (₹)
             </label>
             <input
               type="number"
@@ -235,15 +291,23 @@ export default function EditCoursePage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Thumbnail URL
+            Level
           </label>
-          <input
-            type="url"
-            value={thumbnailUrl}
-            onChange={(e) => setThumbnailUrl(e.target.value)}
+          <select
+            value={level}
+            onChange={(e) => setLevel(e.target.value as CourseLevel)}
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-          />
+          >
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
         </div>
+
+        <ThumbnailUpload
+          currentUrl={thumbnailUrl}
+          onUploaded={(url) => setThumbnailUrl(url)}
+        />
 
         <div className="flex items-center gap-2">
           <input

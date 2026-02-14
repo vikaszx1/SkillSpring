@@ -1,35 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { createAdminClient } from "@/lib/supabase-admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-async function createRazorpayOrder(params: {
-  amount: number;
-  currency: string;
-  receipt: string;
-  notes: Record<string, string>;
-}) {
-  const keyId = process.env.RAZORPAY_KEY_ID!;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET!;
-  const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
-
-  const res = await fetch("https://api.razorpay.com/v1/orders", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Basic ${auth}`,
-    },
-    body: JSON.stringify(params),
-  });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.error?.description || "Razorpay order creation failed");
-  }
-
-  return res.json();
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,7 +16,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Supabase client from request cookies
+    // Auth client — verify the logged-in user
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -56,7 +30,6 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    // Verify user is authenticated
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -68,19 +41,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get course details and verify it exists & is purchasable
-    const { data: course } = await supabase
+    // Service Role client — fetch price securely (bypasses RLS)
+    const adminSupabase = createAdminClient();
+
+    const { data: course, error: courseError } = await adminSupabase
       .from("courses")
       .select("id, title, price, is_approved, is_published")
       .eq("id", courseId)
-      .eq("is_approved", true)
-      .eq("is_published", true)
       .single();
 
-    if (!course) {
+    if (courseError || !course) {
       return NextResponse.json(
-        { error: "Course not found or not available" },
+        { error: "Course not found" },
         { status: 404 }
+      );
+    }
+
+    if (!course.is_approved || !course.is_published) {
+      return NextResponse.json(
+        { error: "Course is not available for purchase" },
+        { status: 400 }
       );
     }
 
@@ -92,7 +72,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if already enrolled
-    const { data: existingEnrollment } = await supabase
+    const { data: existingEnrollment } = await adminSupabase
       .from("enrollments")
       .select("id")
       .eq("user_id", user.id)
@@ -106,26 +86,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Razorpay order (amount in paise — INR smallest unit)
+    // Create Razorpay order via REST API (amount in paise)
     const amountInPaise = Math.round(course.price * 100);
+    const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET!;
+    const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
 
-    const order = await createRazorpayOrder({
-      amount: amountInPaise,
-      currency: "INR",
-      receipt: `course_${courseId}_${user.id}_${Date.now()}`,
-      notes: {
-        courseId,
-        userId: user.id,
-        courseTitle: course.title,
+    const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${auth}`,
       },
+      body: JSON.stringify({
+        amount: amountInPaise,
+        currency: "INR",
+        receipt: courseId,
+        notes: {
+          courseId,
+          userId: user.id,
+          courseTitle: course.title,
+        },
+      }),
     });
+
+    if (!rzpRes.ok) {
+      const rzpError = await rzpRes.json();
+      console.error("Razorpay error:", rzpError);
+      return NextResponse.json(
+        { error: "Failed to create payment order" },
+        { status: 500 }
+      );
+    }
+
+    const order = await rzpRes.json();
 
     return NextResponse.json({
       orderId: order.id,
       amount: order.amount,
       currency: order.currency,
       courseName: course.title,
-      keyId: process.env.RAZORPAY_KEY_ID,
+      keyId,
     });
   } catch (error: unknown) {
     console.error("Create order error:", error);

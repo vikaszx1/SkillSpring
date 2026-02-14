@@ -46,7 +46,7 @@ export default function CourseCard({
         {/* Price badge */}
         <div className="absolute top-3 right-3">
           <span className="bg-white/90 backdrop-blur-sm text-gray-900 px-2.5 py-1 rounded-lg text-sm font-bold shadow-sm">
-            {course.price === 0 ? "Free" : `$${course.price}`}
+            {course.price === 0 ? "Free" : `₹${course.price}`}
           </span>
         </div>
       </div>
@@ -67,8 +67,25 @@ export default function CourseCard({
 
         {/* Instructor */}
         <p className="mt-1.5 text-sm text-gray-500">
-          {course.instructor?.full_name}
+          {Array.isArray(course.instructor)
+            ? (course.instructor as { full_name: string }[])[0]?.full_name
+            : course.instructor?.full_name}
         </p>
+
+        {/* Level badge */}
+        {course.level && (
+          <span
+            className={`inline-block mt-1.5 px-2 py-0.5 rounded text-xs font-medium ${
+              course.level === "beginner"
+                ? "bg-green-100 text-green-700"
+                : course.level === "intermediate"
+                ? "bg-yellow-100 text-yellow-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
+          </span>
+        )}
 
         {/* Rating & lessons */}
         <div className="mt-3 flex items-center justify-between text-sm">

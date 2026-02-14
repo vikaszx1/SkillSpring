@@ -103,7 +103,7 @@ export default function InstructorDashboard() {
                     ) : (
                       <span className="text-yellow-600">Pending Approval</span>
                     )}
-                    {" · "}${course.price}
+                    {" · "}&#8377;{course.price}
                   </p>
                 </div>
                 <Link
