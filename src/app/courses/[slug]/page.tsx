@@ -5,7 +5,6 @@ import { createClient } from "@/lib/supabase";
 import { useParams, useRouter } from "next/navigation";
 import type { Course, CourseSection, CourseLesson, Review } from "@/lib/types";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import RazorpayButton from "@/components/RazorpayButton";
 import VideoPlayer from "@/components/VideoPlayer";
@@ -152,8 +151,6 @@ export default function CourseDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Navbar />
-
       {/* Hero */}
       <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
         {/* Background decoration */}
