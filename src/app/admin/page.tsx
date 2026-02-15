@@ -9,6 +9,7 @@ export default function AdminDashboard() {
     totalCourses: 0,
     pendingApproval: 0,
     totalUsers: 0,
+    totalStudents: 0,
     totalCategories: 0,
     totalEnrollments: 0,
     totalRevenue: 0,
@@ -17,7 +18,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     async function load() {
-      const [courses, pending, users, categories, enrollments, revenue] =
+      const [courses, pending, users, students, categories, enrollments, revenue] =
         await Promise.all([
           supabase.from("courses").select("*", { count: "exact", head: true }),
           supabase
@@ -25,6 +26,7 @@ export default function AdminDashboard() {
             .select("*", { count: "exact", head: true })
             .eq("is_approved", false),
           supabase.from("users").select("*", { count: "exact", head: true }),
+          supabase.from("users").select("*", { count: "exact", head: true }).eq("role", "student"),
           supabase.from("categories").select("*", { count: "exact", head: true }),
           supabase.from("enrollments").select("*", { count: "exact", head: true }),
           supabase.from("enrollments").select("amount_paid"),
@@ -39,6 +41,7 @@ export default function AdminDashboard() {
         totalCourses: courses.count || 0,
         pendingApproval: pending.count || 0,
         totalUsers: users.count || 0,
+        totalStudents: students.count || 0,
         totalCategories: categories.count || 0,
         totalEnrollments: enrollments.count || 0,
         totalRevenue: totalRev,
@@ -76,6 +79,12 @@ export default function AdminDashboard() {
             {stats.totalUsers}
           </p>
         </Link>
+        <div className="bg-white p-6 rounded-xl border">
+          <p className="text-sm text-gray-500">Total Students</p>
+          <p className="text-3xl font-bold text-purple-600 mt-1">
+            {stats.totalStudents}
+          </p>
+        </div>
         <div className="bg-white p-6 rounded-xl border">
           <p className="text-sm text-gray-500">Total Enrollments</p>
           <p className="text-3xl font-bold text-blue-600 mt-1">
