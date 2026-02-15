@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase";
 import type { User } from "@/lib/types";
 import { useToast } from "@/components/Toast";
+import { PageLoader } from "@/components/Spinner";
 
 export default function StudentProfilePage() {
   const supabase = createClient();
@@ -138,10 +139,10 @@ export default function StudentProfilePage() {
     setSaving(false);
   }
 
-  if (loading) return <div className="text-gray-500">Loading...</div>;
+  if (loading) return <PageLoader />;
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-900 mb-8">My Profile</h1>
 
       {/* Stats */}

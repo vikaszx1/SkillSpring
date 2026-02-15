@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import type { Enrollment } from "@/lib/types";
 import Link from "next/link";
+import { PageLoader } from "@/components/Spinner";
 
 export default function StudentDashboard() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
@@ -49,7 +50,7 @@ export default function StudentDashboard() {
       </div>
 
       {loading ? (
-        <div className="text-gray-500">Loading...</div>
+        <PageLoader />
       ) : enrollments.length === 0 ? (
         <div className="bg-white rounded-xl border p-12 text-center">
           <p className="text-gray-500 mb-4">

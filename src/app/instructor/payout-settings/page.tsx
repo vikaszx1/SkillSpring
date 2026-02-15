@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import type { PaymentMethodType, InstructorPaymentMethod } from "@/lib/types";
 import { useToast } from "@/components/Toast";
+import { PageLoader } from "@/components/Spinner";
 
 export default function PayoutSettingsPage() {
   const supabase = createClient();
@@ -110,7 +111,7 @@ export default function PayoutSettingsPage() {
     setSaving(false);
   }
 
-  if (loading) return <div className="text-gray-500">Loading...</div>;
+  if (loading) return <PageLoader />;
 
   return (
     <div className="max-w-2xl">

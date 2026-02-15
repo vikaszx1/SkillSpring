@@ -6,6 +6,8 @@ import type { PayoutRequest } from "@/lib/types";
 import { useToast } from "@/components/Toast";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import PromptDialog from "@/components/PromptDialog";
+import { formatDate } from "@/lib/utils";
+import { PageLoader } from "@/components/Spinner";
 
 export default function AdminPayoutsPage() {
   const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
@@ -177,7 +179,7 @@ export default function AdminPayoutsPage() {
       </div>
 
       {loading ? (
-        <div className="text-gray-500">Loading...</div>
+        <PageLoader />
       ) : payouts.length === 0 ? (
         <div className="bg-white rounded-xl border p-12 text-center text-gray-500">
           {filter === "pending"
@@ -248,7 +250,7 @@ export default function AdminPayoutsPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(p.requested_at).toLocaleDateString()}
+                    {formatDate(p.requested_at)}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 max-w-[200px] truncate">
                     {p.admin_note || "—"}
@@ -300,7 +302,7 @@ export default function AdminPayoutsPage() {
               </div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-lg font-semibold text-gray-900">₹{p.amount.toLocaleString()}</span>
-                <span className="text-xs text-gray-400">{new Date(p.requested_at).toLocaleDateString()}</span>
+                <span className="text-xs text-gray-400">{formatDate(p.requested_at)}</span>
               </div>
               {p.payment_method_type && (
                 <div className="mb-3">

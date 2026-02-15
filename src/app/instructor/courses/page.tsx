@@ -6,6 +6,7 @@ import type { Course } from "@/lib/types";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
 import PromptDialog from "@/components/PromptDialog";
+import { PageLoader } from "@/components/Spinner";
 
 export default function InstructorCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -60,7 +61,7 @@ export default function InstructorCoursesPage() {
   }
 
   if (loading) {
-    return <div className="text-gray-500">Loading...</div>;
+    return <PageLoader />;
   }
 
   return (

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import type { User, UserRole } from "@/lib/types";
 import { useToast } from "@/components/Toast";
+import { formatDate } from "@/lib/utils";
+import { PageLoader } from "@/components/Spinner";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -95,7 +97,7 @@ export default function AdminUsersPage() {
       </div>
 
       {loading ? (
-        <div className="text-gray-500">Loading...</div>
+        <PageLoader />
       ) : filtered.length === 0 ? (
         <div className="bg-white rounded-xl border p-12 text-center text-gray-500">
           No users found.
@@ -152,7 +154,7 @@ export default function AdminUsersPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(user.created_at).toLocaleDateString()}
+                    {formatDate(user.created_at)}
                   </td>
                   <td className="px-6 py-4">
                     <select
@@ -207,7 +209,7 @@ export default function AdminUsersPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-400">
-                  Joined {new Date(user.created_at).toLocaleDateString()}
+                  Joined {formatDate(user.created_at)}
                 </span>
                 <select
                   value={user.role}

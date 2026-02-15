@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import RazorpayButton from "@/components/RazorpayButton";
 import VideoPlayer from "@/components/VideoPlayer";
 import { useToast } from "@/components/Toast";
+import Spinner from "@/components/Spinner";
 
 export default function CourseDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -125,8 +126,8 @@ export default function CourseDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">
-        Loading...
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner size="lg" />
       </div>
     );
   }

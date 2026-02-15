@@ -7,6 +7,7 @@ import type { Course, CourseSection, CourseLesson, Category, CourseLevel } from 
 import ThumbnailUpload from "@/components/ThumbnailUpload";
 import { useToast } from "@/components/Toast";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { PageLoader } from "@/components/Spinner";
 
 export default function EditCoursePage() {
   const { id } = useParams<{ id: string }>();
@@ -189,7 +190,7 @@ export default function EditCoursePage() {
     setConfirmOpen(true);
   }
 
-  if (loading) return <div className="text-gray-500">Loading...</div>;
+  if (loading) return <PageLoader />;
 
   return (
     <div className="max-w-3xl w-full">

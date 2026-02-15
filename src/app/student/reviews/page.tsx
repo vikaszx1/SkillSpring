@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase";
 import { useToast } from "@/components/Toast";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils";
+import { PageLoader } from "@/components/Spinner";
 
 interface StudentReview {
   id: string;
@@ -147,7 +149,7 @@ export default function StudentReviewsPage() {
     );
   }
 
-  if (loading) return <div className="text-gray-500">Loading...</div>;
+  if (loading) return <PageLoader />;
 
   return (
     <div>
@@ -245,7 +247,7 @@ export default function StudentReviewsPage() {
                       <div className="flex items-center gap-2 mt-1">
                         {renderStars(review.rating)}
                         <span className="text-sm text-gray-500">
-                          {new Date(review.created_at).toLocaleDateString()}
+                          {formatDate(review.created_at)}
                         </span>
                       </div>
                       {review.comment && (

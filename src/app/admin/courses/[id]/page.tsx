@@ -8,7 +8,9 @@ import VideoPlayer from "@/components/VideoPlayer";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import PromptDialog from "@/components/PromptDialog";
 import { useToast } from "@/components/Toast";
+import { PageLoader } from "@/components/Spinner";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils";
 
 export default function AdminCourseReviewPage() {
   const { id } = useParams<{ id: string }>();
@@ -223,7 +225,7 @@ export default function AdminCourseReviewPage() {
   }
 
   if (loading) {
-    return <div className="text-gray-500">Loading...</div>;
+    return <PageLoader />;
   }
 
   if (!course) {
@@ -520,7 +522,7 @@ export default function AdminCourseReviewPage() {
                     </span>
                   </div>
                   <span className="text-xs text-gray-400">
-                    {new Date(review.created_at).toLocaleDateString()}
+                    {formatDate(review.created_at)}
                   </span>
                 </div>
                 {review.comment && (

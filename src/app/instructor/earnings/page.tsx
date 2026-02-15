@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase";
 import type { PayoutRequest, InstructorPaymentMethod } from "@/lib/types";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
+import { formatDate } from "@/lib/utils";
+import { PageLoader } from "@/components/Spinner";
 
 interface CourseEarning {
   course_id: string;
@@ -199,7 +201,7 @@ export default function InstructorEarningsPage() {
     setWithdrawing(false);
   }
 
-  if (loading) return <div className="text-gray-500">Loading...</div>;
+  if (loading) return <PageLoader />;
 
   const availableBalance = totalRevenue - totalPaidOut - totalPending;
 
@@ -339,11 +341,11 @@ export default function InstructorEarningsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(p.requested_at).toLocaleDateString()}
+                      {formatDate(p.requested_at)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {p.processed_at
-                        ? new Date(p.processed_at).toLocaleDateString()
+                        ? formatDate(p.processed_at)
                         : "—"}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
@@ -373,8 +375,8 @@ export default function InstructorEarningsPage() {
                   </span>
                 </div>
                 <p className="text-xs text-gray-500">
-                  Requested: {new Date(p.requested_at).toLocaleDateString()}
-                  {p.processed_at && ` · Processed: ${new Date(p.processed_at).toLocaleDateString()}`}
+                  Requested: {formatDate(p.requested_at)}
+                  {p.processed_at && ` · Processed: ${formatDate(p.processed_at)}`}
                 </p>
                 {p.admin_note && <p className="text-xs text-gray-400 mt-1">{p.admin_note}</p>}
               </div>
@@ -465,7 +467,7 @@ export default function InstructorEarningsPage() {
                         ₹{t.amount.toLocaleString()}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500 text-right">
-                        {new Date(t.date).toLocaleDateString()}
+                        {formatDate(t.date)}
                       </td>
                     </tr>
                   ))}
@@ -481,7 +483,7 @@ export default function InstructorEarningsPage() {
                   </div>
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-xs text-gray-500 truncate mr-2">{t.course_title}</span>
-                    <span className="text-xs text-gray-400 flex-shrink-0">{new Date(t.date).toLocaleDateString()}</span>
+                    <span className="text-xs text-gray-400 flex-shrink-0">{formatDate(t.date)}</span>
                   </div>
                 </div>
               ))}

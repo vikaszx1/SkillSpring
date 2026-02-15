@@ -7,6 +7,7 @@ import { useToast } from "@/components/Toast";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import PromptDialog from "@/components/PromptDialog";
 import Link from "next/link";
+import { PageLoader } from "@/components/Spinner";
 
 export default function CourseApprovalsPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -274,7 +275,7 @@ export default function CourseApprovalsPage() {
       </div>
 
       {loading ? (
-        <div className="text-gray-500">Loading...</div>
+        <PageLoader />
       ) : courses.length === 0 ? (
         <div className="bg-white rounded-xl border p-12 text-center text-gray-500">
           {filter === "pending"

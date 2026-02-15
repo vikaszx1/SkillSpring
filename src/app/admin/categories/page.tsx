@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase";
 import type { Category } from "@/lib/types";
 import { useToast } from "@/components/Toast";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { PageLoader } from "@/components/Spinner";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -122,7 +123,7 @@ export default function CategoriesPage() {
 
       {/* Categories List */}
       {loading ? (
-        <div className="text-gray-500">Loading...</div>
+        <PageLoader />
       ) : categories.length === 0 ? (
         <div className="bg-white rounded-xl border p-12 text-center text-gray-500">
           No categories yet. Add one above.

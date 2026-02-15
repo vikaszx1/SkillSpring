@@ -6,12 +6,13 @@ import { createClient } from "@/lib/supabase";
 import type { Course, Category } from "@/lib/types";
 import Footer from "@/components/Footer";
 import CourseCard from "@/components/CourseCard";
+import Spinner from "@/components/Spinner";
 
 type SortOption = "newest" | "price-low" | "price-high" | "popular";
 
 export default function CoursesMarketplace() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-500">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Spinner size="lg" /></div>}>
       <CoursesContent />
     </Suspense>
   );
