@@ -27,7 +27,7 @@ export default function Home() {
         .eq("is_approved", true)
         .eq("is_published", true)
         .order("created_at", { ascending: false })
-        .limit(6);
+        .limit(3);
 
       const courses = coursesData || [];
       setFeaturedCourses(courses);
