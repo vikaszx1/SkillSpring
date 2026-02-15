@@ -98,35 +98,50 @@ export default function Home() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
-          <div className="max-w-3xl">
-            <span className="inline-block px-3 py-1 bg-white/10 text-primary-100 rounded-full text-sm font-medium mb-6 backdrop-blur-sm border border-white/10">
-              Join thousands of learners worldwide
-            </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight">
-              Invest in your future.{" "}
-              <span className="text-primary-200">Learn without limits.</span>
-            </h1>
-            <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed max-w-2xl">
-              Master new skills with courses from expert instructors. Whether you
-              want to advance your career, pick up a new hobby, or grow your
-              knowledge — start learning today.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center bg-white text-primary-700 px-7 py-3.5 rounded-xl hover:bg-primary-50 font-semibold text-lg transition-colors shadow-lg shadow-primary-900/20"
-              >
-                Get Started Free
-                <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link>
-              <Link
-                href="/courses"
-                className="inline-flex items-center justify-center border-2 border-white/30 text-white px-7 py-3.5 rounded-xl hover:bg-white/10 font-semibold text-lg transition-colors backdrop-blur-sm"
-              >
-                Browse Courses
-              </Link>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left - Text */}
+            <div>
+              <span className="inline-block px-3 py-1 bg-white/10 text-primary-100 rounded-full text-sm font-medium mb-6 backdrop-blur-sm border border-white/10">
+                Join thousands of learners worldwide
+              </span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight">
+                Invest in your future.{" "}
+                <span className="text-primary-200">Learn without limits.</span>
+              </h1>
+              <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed">
+                Master new skills with courses from expert instructors. Whether you
+                want to advance your career, pick up a new hobby, or grow your
+                knowledge — start learning today.
+              </p>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                <Link
+                  href="/signup"
+                  className="inline-flex items-center justify-center bg-white text-primary-700 px-7 py-3.5 rounded-xl hover:bg-primary-50 font-semibold text-lg transition-colors shadow-lg shadow-primary-900/20"
+                >
+                  Get Started Free
+                  <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+                <Link
+                  href="/courses"
+                  className="inline-flex items-center justify-center border-2 border-white/30 text-white px-7 py-3.5 rounded-xl hover:bg-white/10 font-semibold text-lg transition-colors backdrop-blur-sm"
+                >
+                  Browse Courses
+                </Link>
+              </div>
+            </div>
+
+            {/* Right - Image */}
+            <div className="hidden lg:flex justify-center">
+              <div className="relative w-3/4">
+                <div className="absolute -inset-4 bg-white/10 rounded-3xl blur-2xl" />
+                <img
+                  src="/hero-image.png"
+                  alt="Students learning together"
+                  className="relative w-full rounded-2xl shadow-2xl shadow-primary-900/30 object-cover"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -166,12 +181,12 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               {categories.slice(0, 6).map((cat, i) => (
                 <Link
                   key={cat.id}
                   href={`/courses?category=${cat.slug}`}
-                  className="group flex flex-col items-center p-6 bg-gray-50 rounded-xl hover:bg-primary-50 hover:shadow-md transition-all duration-200 border border-transparent hover:border-primary-100"
+                  className="group flex flex-col items-center p-6 bg-gray-50 rounded-xl hover:bg-primary-50 hover:shadow-md transition-all duration-200 border border-transparent hover:border-primary-100 w-40 sm:w-44"
                 >
                   <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center group-hover:bg-primary-200 transition-colors">
                     <svg
@@ -281,11 +296,16 @@ export default function Home() {
                   "Watch video lessons at your own pace. Track your progress and earn completion.",
                 icon: "M13 10V3L4 14h7v7l9-11h-7z",
               },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-2xl mb-5">
+            ].map((item, idx) => (
+              <div key={item.step} className="relative text-center bg-white rounded-2xl border p-8 hover:shadow-lg transition-shadow duration-200">
+                {/* Step number + Icon */}
+                <div className="flex items-center justify-center gap-3 mb-5">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-600 text-white text-sm font-bold flex-shrink-0">
+                    {item.step}
+                  </div>
+                  <div className="flex items-center justify-center w-12 h-12 bg-primary-50 rounded-xl flex-shrink-0">
                   <svg
-                    className="w-7 h-7 text-primary-600"
+                    className="w-6 h-6 text-primary-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -297,16 +317,24 @@ export default function Home() {
                       d={item.icon}
                     />
                   </svg>
+                  </div>
                 </div>
-                <span className="text-xs font-bold text-primary-600 uppercase tracking-widest">
-                  Step {item.step}
-                </span>
-                <h3 className="mt-2 text-xl font-semibold text-gray-900">
+
+                <h3 className="text-xl font-semibold text-gray-900">
                   {item.title}
                 </h3>
-                <p className="mt-2 text-gray-500 leading-relaxed">
+                <p className="mt-2 text-gray-500 leading-relaxed text-sm">
                   {item.description}
                 </p>
+
+                {/* Connector arrow (hidden on last item and mobile) */}
+                {idx < 2 && (
+                  <div className="hidden md:block absolute top-1/2 -right-6 lg:-right-8 -translate-y-1/2 text-gray-300">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                )}
               </div>
             ))}
           </div>

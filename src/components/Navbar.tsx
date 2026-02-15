@@ -202,7 +202,11 @@ export default function Navbar() {
                       <Link
                         key={item.href}
                         href={item.href}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        className={`block px-4 py-2 text-sm ${
+                          isActive(pathname, item.href)
+                            ? "text-primary-600 bg-primary-50 font-medium"
+                            : "text-gray-700 hover:bg-gray-50"
+                        }`}
                       >
                         {item.label}
                       </Link>
@@ -294,7 +298,11 @@ export default function Navbar() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className="block text-sm font-medium py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-50"
+                    className={`block text-sm font-medium py-2 px-3 rounded-lg ${
+                      isActive(pathname, item.href)
+                        ? "text-primary-600 bg-primary-50"
+                        : "text-gray-600 hover:bg-gray-50"
+                    }`}
                   >
                     {item.label}
                   </Link>

@@ -193,7 +193,7 @@ export default function EditCoursePage() {
   if (loading) return <PageLoader />;
 
   return (
-    <div className="max-w-3xl w-full">
+    <div className="max-w-3xl w-full mx-auto">
       <ConfirmDialog
         open={confirmOpen}
         title={confirmConfig.title}
